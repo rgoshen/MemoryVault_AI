@@ -21,12 +21,14 @@ class MemoryVaultSetupVerifier:
 
     def log_result(self, test_name, passed, details=""):
         """Log test result"""
-        self.results.append({
-            "test": test_name,
-            "passed": passed,
-            "details": details,
-            "timestamp": datetime.now().isoformat()
-        })
+        self.results.append(
+            {
+                "test": test_name,
+                "passed": passed,
+                "details": details,
+                "timestamp": datetime.now().isoformat(),
+            }
+        )
         if not passed:
             self.all_tests_passed = False
 
@@ -36,16 +38,23 @@ class MemoryVaultSetupVerifier:
 
         version = sys.version_info
         if version.major == 3 and version.minor >= 13:
-            print(
-                f"  ✅ Python {version.major}.{version.minor}.{version.micro}")
-            self.log_result("Python Version", True,
-                            f"{version.major}.{version.minor}.{version.micro}")
+            print(f"  ✅ Python {version.major}.{version.minor}.{version.micro}")
+            self.log_result(
+                "Python Version",
+                True,
+                f"{version.major}.{version.minor}.{version.micro}",
+            )
             return True
         else:
             print(
-                f"  ❌ Python {version.major}.{version.minor}.{version.micro} - Need Python 3.13+")
-            self.log_result("Python Version", False,
-                            f"Need 3.13+, got {version.major}.{version.minor}")
+                f"  ❌ Python {version.major}.{version.minor}."
+                f"{version.micro} - Need Python 3.13+"
+            )
+            self.log_result(
+                "Python Version",
+                False,
+                f"Need 3.13+, got {version.major}.{version.minor}",
+            )
             return False
 
     def test_required_packages(self):
@@ -60,26 +69,26 @@ class MemoryVaultSetupVerifier:
             ("pypdf", "PDF processing"),
             ("bs4", "Web scraping"),
             ("fastapi", "API server"),
-            ("uvicorn", "ASGI server")
+            ("uvicorn", "ASGI server"),
         ]
 
         missing_packages = []
 
         for package, description in required_packages:
             try:
-                __import__(package.replace('-', '_'))
+                __import__(package.replace("-", "_"))
                 print(f"  ✅ {package}")
             except ImportError:
                 print(f"  ❌ {package} - MISSING")
                 missing_packages.append(package)
 
         if missing_packages:
-            self.log_result("Required Packages", False,
-                            f"Missing: {', '.join(missing_packages)}")
+            self.log_result(
+                "Required Packages", False, f"Missing: {', '.join(missing_packages)}"
+            )
             return False
         else:
-            self.log_result("Required Packages", True,
-                            "All packages installed")
+            self.log_result("Required Packages", True, "All packages installed")
             return True
 
     def test_ollama_connection(self):
@@ -87,27 +96,26 @@ class MemoryVaultSetupVerifier:
         print("🔧 Testing Ollama connection...")
 
         try:
-            response = requests.get(
-                "http://localhost:11434/api/tags", timeout=10)
+            response = requests.get("http://localhost:11434/api/tags", timeout=10)
             if response.status_code == 200:
                 print("  ✅ Ollama is running")
 
                 models = response.json()
-                if models.get('models'):
+                if models.get("models"):
                     print("  📋 Available models:")
                     model_names = []
-                    for model in models['models']:
-                        name = model.get('name', 'Unknown')
+                    for model in models["models"]:
+                        name = model.get("name", "Unknown")
                         print(f"    • {name}")
                         model_names.append(name)
 
-                    self.log_result("Ollama Connection", True,
-                                    f"Models: {', '.join(model_names)}")
+                    self.log_result(
+                        "Ollama Connection", True, f"Models: {', '.join(model_names)}"
+                    )
                     return True
                 else:
                     print("  ❌ No models found")
-                    self.log_result("Ollama Connection", False,
-                                    "No models available")
+                    self.log_result("Ollama Connection", False, "No models available")
                     return False
             else:
                 print(f"  ❌ Ollama returned status {response.status_code}")
@@ -134,23 +142,23 @@ class MemoryVaultSetupVerifier:
             except Exception as e:
                 print(f"  ❌ Failed to create {folder}/: {e}")
 
-        self.log_result("Project Folders", len(created) ==
-                        len(folders), f"Created: {created}")
+        self.log_result(
+            "Project Folders", len(created) == len(folders), f"Created: {created}"
+        )
         return len(created) == len(folders)
 
     def generate_report(self):
         """Generate verification report"""
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("📊 MEMORYVAULT AI SETUP VERIFICATION")
-        print("="*60)
+        print("=" * 60)
 
         passed_tests = [r for r in self.results if r["passed"]]
         failed_tests = [r for r in self.results if not r["passed"]]
 
         print(f"✅ Passed: {len(passed_tests)}")
         print(f"❌ Failed: {len(failed_tests)}")
-        print(
-            f"📊 Success Rate: {len(passed_tests)/(len(self.results))*100:.1f}%")
+        print(f"📊 Success Rate: " f"{len(passed_tests)/(len(self.results))*100:.1f}%")
 
         if failed_tests:
             print("\n⚠️  ISSUES TO FIX:")
@@ -168,13 +176,13 @@ class MemoryVaultSetupVerifier:
     def run_all_tests(self):
         """Run all verification tests"""
         print("🧠🔒 MEMORYVAULT AI SETUP VERIFICATION")
-        print("="*50)
+        print("=" * 50)
 
         tests = [
             self.test_python_version,
             self.test_required_packages,
             self.test_ollama_connection,
-            self.create_project_folders
+            self.create_project_folders,
         ]
 
         for test_func in tests:
