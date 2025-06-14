@@ -24,7 +24,14 @@ class MemoryManager:
         self.memory_dir.mkdir(exist_ok=True)
 
         self.conversations = self.load_memory()
-        self.current_session = self.create_session()
+        # Smart session management: resume existing session if available
+        existing_sessions = self.conversations.get("sessions", [])
+        if existing_sessions:
+            # Use the most recent existing session
+            self.current_session = existing_sessions[-1]["id"]
+        else:
+            # No existing sessions, create new one
+            self.current_session = self.create_session()
 
     def load_memory(self) -> Dict:
         """Load all conversation memory from persistent storage"""
@@ -63,7 +70,7 @@ class MemoryManager:
 
     def create_session(self) -> str:
         """Create a new conversation session"""
-        session_id = f"session_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        session_id = f"session_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}"
         session_data = {
             "id": session_id,
             "created": datetime.now().isoformat(),
@@ -147,3 +154,8 @@ class MemoryManager:
             "last_updated": self.conversations["metadata"].get("last_updated"),
             "created": self.conversations["metadata"].get("created")
         }
+
+    def start_new_session(self) -> str:
+        """Explicitly start a new conversation session"""
+        self.current_session = self.create_session()
+        return self.current_session
