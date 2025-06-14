@@ -127,44 +127,73 @@ MemoryVault_AI/
 
 ## 🔧 Development Workflow
 
-### Virtual Environment Commands
+### Code Quality Standards
+
+This project enforces professional code quality standards through automated tools:
+
+**Pre-commit Hooks:**
+
+- **Black** - Code formatting
+- **Flake8** - Linting and style checking
+- **MyPy** - Type checking
+- **Standard hooks** - Trailing whitespace, file endings, YAML validation
+
+**Install pre-commit locally:**
 
 ```bash
-# Activate virtual environment (required each session)
-source .venv/bin/activate
+# Install pre-commit hooks (runs automatically on git commit)
+pre-commit install
 
-# Verify activation (you should see (.venv) in prompt)
-
-# Install new packages
-
-pip install package_name
-
-# Check installed packages
-
-pip list
-
-# Update requirements file
-
-pip freeze > requirements.txt
+# Or run manually on all files
+pre-commit run --all-files
 ```
 
-### Git Workflow
+### CI/CD Pipeline
+
+**Automated Testing:**
+
+- All Pull Requests trigger automated tests
+- Memory Manager tests (100% coverage)
+- Document Vault tests (100% coverage)
+- Code quality checks must pass before merging
+
+**Branch Protection:**
+
+- ✅ No direct commits to main branch
+- ✅ All changes must go through Pull Request workflow
+- ✅ Status checks must pass before merging
+- ✅ Code review recommended
+
+### Contributing Workflow
+
+1. Create feature branch: git checkout -b feature/your-feature-name
+2. Make changes and ensure tests pass locally
+3. Run pre-commit: pre-commit run --all-files
+4. Commit and push: git push origin feature/your-feature-name
+5. Create Pull Request on GitHub
+6. Wait for CI checks to pass (automated)
+7. Merge via GitHub after review
+
+### Local Development
 
 ```bash
-# Check status
-git status
+# Setup (one time)
+source .venv/bin/activate
+pip install -r requirements.txt
+pre-commit install
 
-# Add files
+# Daily workflow
+git checkout -b feature/my-feature
 
-git add filename.py
+# ... make changes ...
 
-# Commit changes
+pre-commit run --all-files  # Check quality
+python -m tests.test_memory_manager  # Test locally
+python -m tests.test_document_vault
+git add . && git commit -m "Description"
+git push origin feature/my-feature
 
-git commit -m "Description of changes"
-
-# View commit history
-
-git log --oneline
+# Create PR on GitHub
 ```
 
 ### Verification
