@@ -29,17 +29,41 @@ def setup_test_environment():
 
     # Create sample documents
     sample_files = {
-        "sample.txt": "This is a sample text document for testing MemoryVault AI document processing.",
-        "readme.md": "# Test Document\n\nThis is a markdown document for testing purposes.\n\n## Features\n- Document scanning\n- Text processing",
-        "script.py": "#!/usr/bin/env python3\n# Sample Python script\ndef hello_world():\n    print('Hello from test script!')",
-        "data.json": '{"test": true, "purpose": "document vault testing", "features": ["scanning", "indexing"]}',
-        "config.yaml": "app:\n  name: MemoryVault AI\n  version: 1.0\n  features:\n    - memory\n    - documents"
+        "sample.txt": (
+            "This is a sample text document for testing "
+            "MemoryVault AI document processing."
+        ),
+        "readme.md": (
+            "# Test Document\n\n"
+            "This is a markdown document for testing purposes.\n\n"
+            "## Features\n"
+            "- Document scanning\n"
+            "- Text processing"
+        ),
+        "script.py": (
+            "#!/usr/bin/env python3\n"
+            "# Sample Python script\n"
+            "def hello_world():\n"
+            "    print('Hello from test script!')"
+        ),
+        "data.json": (
+            '{"test": true, "purpose": "document vault testing", '
+            '"features": ["scanning", "indexing"]}'
+        ),
+        "config.yaml": (
+            "app:\n"
+            "  name: MemoryVault AI\n"
+            "  version: 1.0\n"
+            "  features:\n"
+            "    - memory\n"
+            "    - documents"
+        ),
     }
 
     created_files = []
     for filename, content in sample_files.items():
         file_path = os.path.join(test_docs_dir, filename)
-        with open(file_path, 'w') as f:
+        with open(file_path, "w") as f:
             f.write(content)
         created_files.append(filename)
 
@@ -60,8 +84,7 @@ def test_document_vault_initialization():
 
     try:
         # Test initialization (without AI model - should still work)
-        vault = DocumentVault(docs_folder=test_docs_dir,
-                              model_name="test-model")
+        vault = DocumentVault(docs_folder=test_docs_dir, model_name="test-model")
         assert vault is not None, "Document vault should initialize"
         assert vault.docs_folder.exists(), "Docs folder should be created"
 
@@ -87,11 +110,12 @@ def test_document_scanning():
         # Test document scanning
         scan_result = vault.scan_documents()
 
-        assert scan_result["total_files"] == len(
-            created_files), f"Should find {len(created_files)} files, found {scan_result['total_files']}"
+        assert scan_result["total_files"] == len(created_files), (
+            f"Should find {len(created_files)} files, "
+            f"found {scan_result['total_files']}"
+        )
         assert scan_result["total_size_mb"] > 0, "Should calculate total size"
-        assert len(scan_result["files"]) == len(
-            created_files), "Should list all files"
+        assert len(scan_result["files"]) == len(created_files), "Should list all files"
 
         print(f"  ✅ Scanned {scan_result['total_files']} files")
         print(f"  ✅ Total size: {scan_result['total_size_mb']} MB")
@@ -140,7 +164,8 @@ def test_vault_status():
 
         # Verify file count matches scan
         assert status["total_files"] == len(
-            created_files), "Status should match scan results"
+            created_files
+        ), "Status should match scan results"
 
         print("  ✅ Status reporting accurate")
 
@@ -156,15 +181,17 @@ def test_indexing_without_ai():
 
     try:
         # Create vault without AI model (will fail to connect)
-        vault = DocumentVault(docs_folder=test_docs_dir,
-                              model_name="non-existent-model")
+        vault = DocumentVault(
+            docs_folder=test_docs_dir, model_name="non-existent-model"
+        )
 
         # Test indexing without AI
         index_result = vault.index_documents()
 
         assert not index_result["success"], "Indexing should fail without AI"
-        assert "AI embeddings not available" in index_result[
-            "error"], "Should indicate AI unavailable"
+        assert (
+            "AI embeddings not available" in index_result["error"]
+        ), "Should indicate AI unavailable"
 
         print("  ✅ Graceful failure when AI unavailable")
         print(f"  ✅ Error message: {index_result['error']}")
@@ -185,12 +212,12 @@ def test_file_type_support():
             "style.css": "body { font-family: Arial; }",
             "component.jsx": "const Component = () => <div>Hello</div>;",
             "types.ts": "interface User { name: string; }",
-            "unsupported.xyz": "This file type is not supported"
+            "unsupported.xyz": "This file type is not supported",
         }
 
         for filename, content in additional_files.items():
             file_path = os.path.join(test_docs_dir, filename)
-            with open(file_path, 'w') as f:
+            with open(file_path, "w") as f:
                 f.write(content)
 
         vault = DocumentVault(docs_folder=test_docs_dir)
@@ -203,7 +230,9 @@ def test_file_type_support():
         assert "types.ts" in file_names, "Should support TypeScript files"
 
         # Check unsupported type is ignored
-        assert "unsupported.xyz" not in file_names, "Should ignore unsupported file types"
+        assert (
+            "unsupported.xyz" not in file_names
+        ), "Should ignore unsupported file types"
 
         print("  ✅ Supported file types detected")
         print("  ✅ Unsupported file types ignored")
@@ -233,14 +262,13 @@ def test_large_file_handling():
         # Create a moderately sized file
         large_content = "Large file content. " * 1000  # ~20KB
         large_file_path = os.path.join(test_docs_dir, "large_file.txt")
-        with open(large_file_path, 'w') as f:
+        with open(large_file_path, "w") as f:
             f.write(large_content)
 
         scan_result = vault.scan_documents()
 
         # Should find the large file
-        large_files = [f for f in scan_result["files"]
-                       if f["name"] == "large_file.txt"]
+        large_files = [f for f in scan_result["files"] if f["name"] == "large_file.txt"]
         assert len(large_files) == 1, "Should find large file"
 
         large_file = large_files[0]
@@ -270,7 +298,7 @@ def test_index_clearing():
 
         # Create a test file in the vector store
         test_index_file = os.path.join(mock_vector_path, "test_index.db")
-        with open(test_index_file, 'w') as f:
+        with open(test_index_file, "w") as f:
             f.write("mock index data")
 
         # Verify the file exists
@@ -285,7 +313,8 @@ def test_index_clearing():
 
         # Verify the directory is gone
         assert not os.path.exists(
-            mock_vector_path), "Vector store directory should be removed"
+            mock_vector_path
+        ), "Vector store directory should be removed"
 
         print("  ✅ Index cleared successfully")
 
@@ -305,7 +334,7 @@ def run_all_tests():
         test_indexing_without_ai,
         test_file_type_support,
         test_large_file_handling,
-        test_index_clearing
+        test_index_clearing,
     ]
 
     passed = 0
@@ -320,7 +349,7 @@ def run_all_tests():
             failed += 1
 
     print("\n" + "=" * 50)
-    print(f"📊 TEST RESULTS")
+    print("📊 TEST RESULTS")
     print("=" * 50)
     print(f"✅ Passed: {passed}")
     print(f"❌ Failed: {failed}")

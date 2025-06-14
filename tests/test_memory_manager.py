@@ -45,8 +45,7 @@ def test_memory_initialization():
         print("  ✅ Initialization successful")
 
         # Test memory file creation
-        assert os.path.exists(
-            test_memory_file), "Memory file should be created"
+        assert os.path.exists(test_memory_file), "Memory file should be created"
         print("  ✅ Memory file created")
 
     finally:
@@ -64,8 +63,7 @@ def test_message_storage():
 
         # Test adding messages
         success1 = memory.add_message("user", "Hello, this is a test!")
-        success2 = memory.add_message(
-            "assistant", "Hello! I received your message.")
+        success2 = memory.add_message("assistant", "Hello! I received your message.")
 
         assert success1, "Should successfully add user message"
         assert success2, "Should successfully add assistant message"
@@ -73,10 +71,11 @@ def test_message_storage():
 
         # Test retrieving context
         context = memory.get_recent_context(5)
-        assert len(
-            context) == 2, f"Should retrieve 2 messages, got {len(context)}"
+        assert len(context) == 2, f"Should retrieve 2 messages, got {len(context)}"
         assert context[0]["role"] == "user", "First message should be from user"
-        assert context[1]["role"] == "assistant", "Second message should be from assistant"
+        assert (
+            context[1]["role"] == "assistant"
+        ), "Second message should be from assistant"
         print("  ✅ Context retrieved correctly")
 
     finally:
@@ -99,7 +98,9 @@ def test_memory_persistence():
         context = memory2.get_recent_context(5)
 
         assert len(context) > 0, "Should load existing messages"
-        assert "Persistent test message" in context[0]["content"], "Should load the exact message"
+        assert (
+            "Persistent test message" in context[0]["content"]
+        ), "Should load the exact message"
         print("  ✅ Memory persisted across instances")
 
     finally:
@@ -123,12 +124,14 @@ def test_conversation_search():
 
         # Test search functionality
         pizza_results = memory.search_conversations("pizza")
-        assert len(
-            pizza_results) == 1, f"Should find 1 pizza message, got {len(pizza_results)}"
+        assert (
+            len(pizza_results) == 1
+        ), f"Should find 1 pizza message, got {len(pizza_results)}"
 
         food_results = memory.search_conversations("food")
-        assert len(
-            food_results) == 1, f"Should find 1 food message, got {len(food_results)}"
+        assert (
+            len(food_results) == 1
+        ), f"Should find 1 food message, got {len(food_results)}"
 
         print("  ✅ Search functionality working")
 
@@ -154,7 +157,9 @@ def test_memory_statistics():
         stats = memory.get_memory_stats()
 
         assert stats["total_sessions"] >= 1, "Should have at least 1 session"
-        assert stats["total_messages"] == 3, f"Should have 3 messages, got {stats['total_messages']}"
+        assert (
+            stats["total_messages"] == 3
+        ), f"Should have 3 messages, got {stats['total_messages']}"
         assert stats["current_session"] is not None, "Should have current session"
 
         print("  ✅ Statistics calculated correctly")
@@ -180,7 +185,9 @@ def test_memory_clearing():
 
         # Verify messages exist
         stats_before = memory.get_memory_stats()
-        assert stats_before["total_messages"] == 2, "Should have messages before clearing"
+        assert (
+            stats_before["total_messages"] == 2
+        ), "Should have messages before clearing"
 
         # Clear memory
         success = memory.clear_memory()
@@ -188,7 +195,9 @@ def test_memory_clearing():
 
         # Verify messages are cleared
         stats_after = memory.get_memory_stats()
-        assert stats_after["total_messages"] == 0, "Should have no messages after clearing"
+        assert (
+            stats_after["total_messages"] == 0
+        ), "Should have no messages after clearing"
 
         print("  ✅ Memory cleared successfully")
 
@@ -221,13 +230,18 @@ def test_explicit_new_session():
 
         # Verify messages are in separate sessions
         stats = memory.get_memory_stats()
-        assert stats["total_sessions"] == 2, f"Should have 2 sessions, got {stats['total_sessions']}"
+        assert (
+            stats["total_sessions"] == 2
+        ), f"Should have 2 sessions, got {stats['total_sessions']}"
 
         # Verify current context is from new session only
         context = memory.get_recent_context(5)
-        assert len(
-            context) == 1, f"Should have 1 message in new session, got {len(context)}"
-        assert "second session" in context[0]["content"], "Should have message from new session"
+        assert (
+            len(context) == 1
+        ), f"Should have 1 message in new session, got {len(context)}"
+        assert (
+            "second session" in context[0]["content"]
+        ), "Should have message from new session"
 
         print("  ✅ New session created successfully")
         print(f"     First session: {first_session_id}")
@@ -250,7 +264,7 @@ def run_all_tests():
         test_conversation_search,
         test_memory_statistics,
         test_memory_clearing,
-        test_explicit_new_session
+        test_explicit_new_session,
     ]
 
     passed = 0
@@ -265,7 +279,7 @@ def run_all_tests():
             failed += 1
 
     print("\n" + "=" * 50)
-    print(f"📊 TEST RESULTS")
+    print("📊 TEST RESULTS")
     print("=" * 50)
     print(f"✅ Passed: {passed}")
     print(f"❌ Failed: {failed}")
