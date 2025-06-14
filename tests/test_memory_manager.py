@@ -196,6 +196,48 @@ def test_memory_clearing():
         cleanup_test_environment(test_dir)
 
 
+def test_explicit_new_session():
+    """Test starting new session explicitly"""
+    print("🧪 Testing Explicit New Session Creation...")
+
+    test_dir, test_memory_file = setup_test_environment()
+
+    try:
+        memory = MemoryManager(memory_file=test_memory_file)
+
+        # Add message to first session
+        memory.add_message("user", "Message in first session")
+        first_session_id = memory.current_session
+
+        # Explicitly start new session
+        new_session_id = memory.start_new_session()
+
+        # Verify new session was created
+        assert new_session_id != first_session_id, "Should create different session ID"
+        assert memory.current_session == new_session_id, "Should switch to new session"
+
+        # Add message to new session
+        memory.add_message("user", "Message in second session")
+
+        # Verify messages are in separate sessions
+        stats = memory.get_memory_stats()
+        assert stats["total_sessions"] == 2, f"Should have 2 sessions, got {stats['total_sessions']}"
+
+        # Verify current context is from new session only
+        context = memory.get_recent_context(5)
+        assert len(
+            context) == 1, f"Should have 1 message in new session, got {len(context)}"
+        assert "second session" in context[0]["content"], "Should have message from new session"
+
+        print("  ✅ New session created successfully")
+        print(f"     First session: {first_session_id}")
+        print(f"     New session: {new_session_id}")
+        print(f"     Total sessions: {stats['total_sessions']}")
+
+    finally:
+        cleanup_test_environment(test_dir)
+
+
 def run_all_tests():
     """Run all memory manager tests"""
     print("🧠🔒 MEMORYVAULT AI - MEMORY MANAGER TESTS")
@@ -207,7 +249,8 @@ def run_all_tests():
         test_memory_persistence,
         test_conversation_search,
         test_memory_statistics,
-        test_memory_clearing
+        test_memory_clearing,
+        test_explicit_new_session
     ]
 
     passed = 0

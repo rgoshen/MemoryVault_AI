@@ -70,7 +70,7 @@ class MemoryManager:
 
     def create_session(self) -> str:
         """Create a new conversation session"""
-        session_id = f"session_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        session_id = f"session_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}"
         session_data = {
             "id": session_id,
             "created": datetime.now().isoformat(),
