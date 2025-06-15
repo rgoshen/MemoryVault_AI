@@ -188,8 +188,16 @@ git checkout -b feature/my-feature
 # ... make changes ...
 
 pre-commit run --all-files  # Check quality
-python -m tests.test_memory_manager  # Test locally
-python -m tests.test_document_vault
+
+# Run all tests (unified pytest approach)
+python3 -m pytest# Clean output, all tests
+python3 -m pytest -v# Verbose, show individual test names
+python3 -m pytest -s -v# Detailed output for debugging# Run specific test modules (if needed)
+
+# Run individual tests
+python3 -m pytest tests/test_memory_manager.py
+python3 -m pytest tests/test_document_vault.py
+
 git add . && git commit -m "Description"
 git push origin feature/my-feature
 
