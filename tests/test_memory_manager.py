@@ -7,13 +7,8 @@ Separate from implementation for clean architecture.
 
 from memory_manager import MemoryManager
 import os
-import sys
 import tempfile
 import shutil
-from pathlib import Path
-
-# Add parent directory to path to import memory_manager
-sys.path.append(str(Path(__file__).parent.parent))
 
 
 def setup_test_environment():

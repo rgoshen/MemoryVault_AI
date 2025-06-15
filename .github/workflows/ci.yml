@@ -39,5 +39,4 @@ jobs:
 
     - name: Run all tests
       run: |
-        python -m tests.test_memory_manager
-        python -m tests.test_document_vault
+        python -m pytest -v

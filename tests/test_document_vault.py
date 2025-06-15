@@ -8,13 +8,8 @@ Tests document scanning, indexing, and querying capabilities.
 
 from document_vault import DocumentVault
 import os
-import sys
 import tempfile
 import shutil
-from pathlib import Path
-
-# Add parent directory to path to import document_vault
-sys.path.append(str(Path(__file__).parent.parent))
 
 
 def setup_test_environment():
